@@ -42,46 +42,68 @@ function mainmenu() {
         }
     ]);
 }
-const currentDepartment =[];
-
-function departmentStatus(){
-    connection.query("SELECT name FROM department", function(err,res){
-        currentDepartment.push(res);
-        console.log(res);
-    });
-}
-
-function deleteDepartmentMenu(){
-    departmentStatus();
-    console.log(currentDepartment);
-    return inquirer.prompt([{
-        type:"list",
-        message: "Which Department do you want to Delete ?",
-        name: "departmentDelete",
-        choices: currentDepartment
-    }
-]);
-}
 
 function viewDepartment() {
-    connection.query("SELECT * FROM department", function (err, res) {
+    connection.query("SELECT * FROM department ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
+        // console.log(res);
+        // return res
         connection.end();
     });
 }
 function viewRoles() {
-    connection.query("SELECT * FROM role", function (err, res) {
+    connection.query("SELECT * FROM role ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
         connection.end();
     });
 }
 function viewEmployee() {
-    connection.query("SELECT * FROM employee", function (err, res) {
+    connection.query("SELECT * FROM employee ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
         connection.end();
+    });
+}
+
+
+function addDepartmentMenu(){
+    return inquirer.prompt([{
+        type : "input",
+        message : "What Department do you want to Add ?",
+        name: "departmentAdd"
+    }]);
+}
+
+function addDepartment(){
+    addDepartmentMenu().then(function(data){
+        // console.log(data);
+        connection.query(`INSERT INTO department (name) VALUES ("${data.departmentAdd}")`,function(err,res){
+            console.table(res);
+            viewDepartment();
+        });
+    });
+}
+
+
+
+function deleteDepartmentMenu() {
+    let allDeparments = viewDepartment();
+    // make a connection query to return all the departments  and save as a variable then render that vaira in choices
+
+    return inquirer.prompt([{
+        type: "list",
+        message: "Which Department do you want to Delete ?",
+        name: "departmentDelete",
+        choices: []
+    }
+    ]);
+}
+function deleteDepartment() {
+    deleteDepartmentMenu();
+    connection.query("DELETE FROM department WHERE name = ?",[], function (err, res) {
+        console.log(res.name);
     });
 }
 
@@ -96,8 +118,10 @@ async function init() {
                 return viewRoles();
             case "View All Employee":
                 return viewEmployee();
+            case "Add Department":
+                return addDepartment();
             case "Delete Department":
-                return deleteDepartmentMenu();
+                return deleteDepartment();
         }
     }
     catch (err) {
