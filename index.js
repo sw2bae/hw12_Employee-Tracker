@@ -69,7 +69,11 @@ async function init() {
         const menu = await mainmenu();
         switch(menu.main){
             case "View All Department":
-                viewDepartment();
+                return viewDepartment();
+            case "View All Roles":
+                return viewRoles();
+            case "View All Employee":
+                return viewEmployee();
         }
     }
     catch (err) {
