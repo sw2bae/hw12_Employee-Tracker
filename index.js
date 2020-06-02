@@ -47,8 +47,6 @@ function viewDepartment() {
     connection.query("SELECT * FROM department ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
-        // console.log(res);
-        // return res
         connection.end();
     });
 }
@@ -78,14 +76,12 @@ function addDepartmentMenu(){
 
 function addDepartment(){
     addDepartmentMenu().then(function(data){
-        // console.log(data);
         connection.query(`INSERT INTO department (name) VALUES ("${data.departmentAdd}")`,function(err,res){
             console.table(res);
             viewDepartment();
         });
     });
 }
-
 
 
 function deleteDepartmentMenu() {
