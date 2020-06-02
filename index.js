@@ -42,9 +42,35 @@ var connection = mysql.createConnection({
     ]);
 }
 
+function viewDepartment() {
+    connection.query("SELECT * FROM department", function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      connection.end();
+    });
+  }
+  function viewRoles() {
+    connection.query("SELECT * FROM role", function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      connection.end();
+    });
+  }
+  function viewEmployee() {
+    connection.query("SELECT * FROM employee", function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      connection.end();
+    });
+  }
+
 async function init() {
     try {
-        await mainmenu();
+        const menu = await mainmenu();
+        switch(menu.main){
+            case "View All Department":
+                viewDepartment();
+        }
     }
     catch (err) {
         console.error(err);
