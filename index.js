@@ -44,11 +44,17 @@ function mainmenu() {
 }
 
 function viewDepartment() {
+    let allDeparments = [];
     connection.query("SELECT * FROM department ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
-        connection.end();
+        for (let i = 0; i < res.length; i++) {
+            allDeparments.push(res[i].name);
+        }
+        return allDeparments;
+        // console.log(allDeparments);
     });
+    connection.end();
 }
 function viewRoles() {
     connection.query("SELECT * FROM role ORDER BY id", function (err, res) {
@@ -66,42 +72,69 @@ function viewEmployee() {
 }
 
 
-function addDepartmentMenu(){
+function addDepartmentMenu() {
     return inquirer.prompt([{
-        type : "input",
-        message : "What Department do you want to Add ?",
+        type: "input",
+        message: "What Department do you want to Add ?",
         name: "departmentAdd"
     }]);
 }
-
-function addDepartment(){
-    addDepartmentMenu().then(function(data){
-        connection.query(`INSERT INTO department (name) VALUES ("${data.departmentAdd}")`,function(err,res){
+function addDepartment() {
+    addDepartmentMenu().then(function (data) {
+        connection.query(`INSERT INTO department (name) VALUES ("${data.departmentAdd}")`, function (err, res) {
             console.table(res);
             viewDepartment();
         });
     });
 }
 
-
-function deleteDepartmentMenu() {
-    let allDeparments = viewDepartment();
-    // make a connection query to return all the departments  and save as a variable then render that vaira in choices
-
-    return inquirer.prompt([{
-        type: "list",
-        message: "Which Department do you want to Delete ?",
-        name: "departmentDelete",
-        choices: []
-    }
-    ]);
+function addRoleMenu() {
+        return inquirer.prompt([{
+            type: "input",
+            message: "What Role do you want to Add ?",
+            name: "title"
+        },
+        {
+            type: "input",
+            message: "Input Salary : ",
+            name: "salary"
+        },
+        {
+            type: "input",
+            message: "Select Department : ",
+            name: "role_department",
+            // choices: ["1","2"]
+        }
+        ]);
 }
-function deleteDepartment() {
-    deleteDepartmentMenu();
-    connection.query("DELETE FROM department WHERE name = ?",[], function (err, res) {
-        console.log(res.name);
+function addRole() {
+    addRoleMenu().then(function(data){
+        connection.query(`INSERT INTO role (title) (salary) (department_id ) VALUES ("${data.title}") ("${data.salary}") ("${data.role_department}")`,function(err,res){
+            console.table(res);
+            viewRoles();
+        });
     });
+
 }
+
+// function deleteDepartmentMenu() {
+//     let allDeparments = viewDepartment();
+//     // make a connection query to return all the departments  and save as a variable then render that vaira in choices
+
+//     return inquirer.prompt([{
+//         type: "list",
+//         message: "Which Department do you want to Delete ?",
+//         name: "departmentDelete",
+//         choices: []
+//     }
+//     ]);
+// }
+// function deleteDepartment() {
+//     deleteDepartmentMenu();
+//     connection.query("DELETE FROM department WHERE name = ?",[], function (err, res) {
+//         console.log(res.name);
+//     });
+// }
 
 
 async function init() {
@@ -116,6 +149,8 @@ async function init() {
                 return viewEmployee();
             case "Add Department":
                 return addDepartment();
+            case "Add Roles":
+                return addRole();
             case "Delete Department":
                 return deleteDepartment();
         }
