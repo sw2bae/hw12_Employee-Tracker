@@ -109,7 +109,7 @@ function addRoleMenu() {
 }
 function addRole() {
     addRoleMenu().then(function(data){
-        connection.query(`INSERT INTO role (title) (salary) (department_id ) VALUES ("${data.title}") ("${data.salary}") ("${data.role_department}")`,function(err,res){
+        connection.query(`INSERT INTO role (title,salary,department_id) VALUES ("${data.title}","${data.salary}","${data.role_department}")`,function(err,res){
             console.table(res);
             viewRoles();
         });
