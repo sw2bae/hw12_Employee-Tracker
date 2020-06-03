@@ -134,13 +134,13 @@ function addEmployeeMenu(){
     },
     {
         type:"input",
-        message:"Manager",
+        message:"Who is Employee's Manager ?",
         name:"manager"
     }]);
 }
 function addEmployee(){
     addEmployeeMenu().then(function(data){
-        connection.query(`INSERT INTO employee () VALUES ()`,function(err,data){
+        connection.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES ("${data.firstName}","${data.lastName}","${data.role}","${data.manager}")`,function(err,res){
             console.table(res);
             viewEmployee();
         });
