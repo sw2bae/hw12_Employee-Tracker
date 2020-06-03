@@ -44,14 +44,14 @@ function mainmenu() {
 }
 
 function viewDepartment() {
-    let allDeparments = [];
+    // let allDeparments = [];
     connection.query("SELECT * FROM department ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
-        for (let i = 0; i < res.length; i++) {
-            allDeparments.push(res[i].name);
-        }
-        return allDeparments;
+        // for (let i = 0; i < res.length; i++) {
+        //     allDeparments.push(res[i].name);
+        // }
+        // return allDeparments;
         // console.log(allDeparments);
     });
     connection.end();
@@ -76,12 +76,12 @@ function addDepartmentMenu() {
     return inquirer.prompt([{
         type: "input",
         message: "What Department do you want to Add ?",
-        name: "departmentAdd"
+        name: "department"
     }]);
 }
 function addDepartment() {
     addDepartmentMenu().then(function (data) {
-        connection.query(`INSERT INTO department (name) VALUES ("${data.departmentAdd}")`, function (err, res) {
+        connection.query(`INSERT INTO department (name) VALUES ("${data.department}")`, function (err, res) {
             console.table(res);
             viewDepartment();
         });
@@ -102,19 +102,49 @@ function addRoleMenu() {
         {
             type: "input",
             message: "Select Department : ",
-            name: "role_department",
+            name: "department",
             // choices: ["1","2"]
         }
         ]);
 }
 function addRole() {
     addRoleMenu().then(function(data){
-        connection.query(`INSERT INTO role (title,salary,department_id) VALUES ("${data.title}","${data.salary}","${data.role_department}")`,function(err,res){
+        connection.query(`INSERT INTO role (title,salary,department_id) VALUES ("${data.title}","${data.salary}","${data.department}")`,function(err,res){
             console.table(res);
             viewRoles();
         });
     });
+}
 
+function addEmployeeMenu(){
+    return inquirer.prompt([{
+        type:"input",
+        message: "What is Employee's Fist Name ?",
+        name : "firstName"
+    },
+    {
+        type:"input",
+        message: "What is Employee's Last Name ?",
+        name: "lastName"
+    },
+    {
+        type:"input",
+        message: "What is Employee's Role ?",
+        name:"role"
+    },
+    {
+        type:"input",
+        message:"Manager",
+        name:"manager"
+    }]);
+}
+function addEmployee(){
+    addEmployeeMenu().then(function(data){
+        connection.query(`INSERT INTO employee () VALUES ()`,function(err,data){
+            console.table(res);
+            viewEmployee();
+        });
+    });
 }
 
 // function deleteDepartmentMenu() {
@@ -151,6 +181,8 @@ async function init() {
                 return addDepartment();
             case "Add Roles":
                 return addRole();
+            case "Add Employee":
+                return addEmployee();
             case "Delete Department":
                 return deleteDepartment();
         }
