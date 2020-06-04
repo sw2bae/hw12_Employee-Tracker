@@ -82,7 +82,7 @@ function addDepartmentMenu() {
 function addDepartment() {
     addDepartmentMenu().then(function (data) {
         connection.query(`INSERT INTO department (name) VALUES ("${data.department}")`, function (err, res) {
-            console.table(res);
+            // console.table(res);
             viewDepartment();
         });
     });
@@ -110,7 +110,7 @@ function addRoleMenu() {
 function addRole() {
     addRoleMenu().then(function(data){
         connection.query(`INSERT INTO role (title,salary,department_id) VALUES ("${data.title}","${data.salary}","${data.department}")`,function(err,res){
-            console.table(res);
+            // console.table(res);
             viewRoles();
         });
     });
@@ -141,11 +141,28 @@ function addEmployeeMenu(){
 function addEmployee(){
     addEmployeeMenu().then(function(data){
         connection.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES ("${data.firstName}","${data.lastName}","${data.role}","${data.manager}")`,function(err,res){
-            console.table(res);
+            // console.table(res);
             viewEmployee();
         });
     });
 }
+
+function deleteDepartmentMenu(){
+    return inquirer.prompt([{
+        type: "input",
+        message: "What Department do you want to Delete ?",
+        name: "department"
+    }]);
+};
+function deleteDepartment(){
+    deleteDepartmentMenu().then(function(data){
+        connection.query(`DELETE FROM department WHERE name="${data.department}"`,function(err,res){
+            // console.table(res);
+            viewDepartment();
+        });
+    });
+};
+
 
 // function deleteDepartmentMenu() {
 //     let allDeparments = viewDepartment();
@@ -185,6 +202,12 @@ async function init() {
                 return addEmployee();
             case "Delete Department":
                 return deleteDepartment();
+            case "Delete Roles":
+                return deleteRole();
+            case "Delete Employee":
+                return deleteEmployee();
+            default :
+                return quite();
         }
     }
     catch (err) {
