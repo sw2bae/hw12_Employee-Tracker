@@ -210,10 +210,9 @@ function updateRole(){
         connection.query(`UPDATE role SET salary = "${data.salary}" WHERE title = "${data.role}"`,function(err,res){
             viewRoles();
         });
- 
-
     });
 }
+
 
 // function deleteDepartmentMenu() {
 //     let allDeparments = viewDepartment();
@@ -233,6 +232,12 @@ function updateRole(){
 //         console.log(res.name);
 //     });
 // }
+
+function quite(){
+    console.log("Good Bye");
+    connection.end();
+
+};
 
 async function init() {
     try {
