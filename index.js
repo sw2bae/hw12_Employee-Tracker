@@ -176,6 +176,21 @@ function deleteRole(){
     });
 };
 
+function deleteEmployeeMenu(){
+    return inquirer.prompt([{
+        type: "input",
+        message: "Which Employee do you want to Delete ?",
+        name: "employee"
+    }]);
+};
+function deleteEmployee(){
+    deleteEmployeeMenu().then(function(data){
+        connection.query(`DELETE FROM employee WHERE first_name = "${data.employee}"`,function(err,res){
+            viewEmployee();
+        });
+    });
+}
+
 // function deleteDepartmentMenu() {
 //     let allDeparments = viewDepartment();
 //     // make a connection query to return all the departments  and save as a variable then render that vaira in choices
