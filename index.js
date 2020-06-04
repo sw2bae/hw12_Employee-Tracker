@@ -146,7 +146,6 @@ function addEmployee(){
         });
     });
 }
-
 function deleteDepartmentMenu(){
     return inquirer.prompt([{
         type: "input",
@@ -162,7 +161,20 @@ function deleteDepartment(){
         });
     });
 };
-
+function deleteRoleMenu(){
+    return inquirer.prompt([{
+        type: "input",
+        message: "What Role do you want to Delete ?",
+        name: "role"
+}]);
+};
+function deleteRole(){
+    deleteRoleMenu().then(function(data){
+        connection.query(`DELETE FROM role WHERE title = "${data.role}"`,function(err,res){
+            viewRoles();
+        });
+    });
+};
 
 // function deleteDepartmentMenu() {
 //     let allDeparments = viewDepartment();
