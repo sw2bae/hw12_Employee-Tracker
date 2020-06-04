@@ -59,14 +59,15 @@ function viewDepartment() {
     connection.end();
 }
 function viewRoles() {
-    connection.query("SELECT * FROM role ORDER BY id", function (err, res) {
+    connection.query("SELECT role.id,title,salary,name AS department FROM role LEFT JOIN department ON role.department_id = department.id", function (err, res) {
         if (err) throw err;
         console.table(res);
         connection.end();
     });
 }
+
 function viewEmployee() {
-    connection.query("SELECT * FROM employee ORDER BY id", function (err, res) {
+    connection.query("SELECT employee.id,first_name,last_name,title,salary,department.name AS department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id", function (err, res) {
         if (err) throw err;
         console.table(res);
         connection.end();
@@ -234,6 +235,7 @@ function updateRole(){
 // }
 
 function quite(){
+    console.clear();
     console.log("Good Bye");
     connection.end();
 
