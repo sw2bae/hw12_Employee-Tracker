@@ -37,6 +37,8 @@ function mainmenu() {
                 "Delete Department",
                 "Delete Roles",
                 "Delete Employee",
+                "Update Roles",
+                "Update Employee",
                 "Quite"
             ]
         }
@@ -191,6 +193,28 @@ function deleteEmployee(){
     });
 }
 
+function updateRoleMenu(){
+    return inquirer.prompt([{
+        type: "input",
+        message: "Which Role do you want to Update ?",
+        name: "role"
+    },
+    {
+        type: "input",
+        message: "Input the updated Salary :",
+        name: "salary"
+    }]);
+}
+function updateRole(){
+    updateRoleMenu().then(function(data){
+        connection.query(`UPDATE role SET salary = "${data.salary}" WHERE title = "${data.role}"`,function(err,res){
+            viewRoles();
+        });
+ 
+
+    });
+}
+
 // function deleteDepartmentMenu() {
 //     let allDeparments = viewDepartment();
 //     // make a connection query to return all the departments  and save as a variable then render that vaira in choices
@@ -209,7 +233,6 @@ function deleteEmployee(){
 //         console.log(res.name);
 //     });
 // }
-
 
 async function init() {
     try {
@@ -233,6 +256,10 @@ async function init() {
                 return deleteRole();
             case "Delete Employee":
                 return deleteEmployee();
+            case "Update Roles":
+                return updateRole();
+            case "Update Employee":
+                return updateEmployee();
             default :
                 return quite();
         }
