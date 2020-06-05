@@ -46,15 +46,9 @@ function mainmenu() {
 }
 
 function viewDepartment() {
-    // let allDeparments = [];
     connection.query("SELECT * FROM department ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
-        // for (let i = 0; i < res.length; i++) {
-        //     allDeparments.push(res[i].name);
-        // }
-        // return allDeparments;
-        // console.log(allDeparments);
     });
     connection.end();
 }
@@ -72,7 +66,7 @@ function viewEmployee() {
         console.table(res);
         connection.end();
     });
-}
+};
 
 
 function addDepartmentMenu() {
@@ -85,116 +79,157 @@ function addDepartmentMenu() {
 function addDepartment() {
     addDepartmentMenu().then(function (data) {
         connection.query(`INSERT INTO department (name) VALUES ("${data.department}")`, function (err, res) {
-            // console.table(res);
             viewDepartment();
         });
     });
 }
 
-function addRoleMenu() {
-        return inquirer.prompt([{
-            type: "input",
-            message: "What Role do you want to Add ?",
-            name: "title"
-        },
-        {
-            type: "input",
-            message: "Input Salary : ",
-            name: "salary"
-        },
-        {
-            type: "input",
-            message: "Select Department : ",
-            name: "department",
-            // choices: ["1","2"]
-        }
-        ]);
+// function addRoleMenu() {
+//     let allDeparments = [];
+//     connection.query(`SELECT name FROM department ORDER BY id`, function (err, res) {
+//         for (let i = 0; i < res.length; i++) {
+//             allDeparments.push(res[i].name);
+//         };
+//         return inquirer.prompt([{
+//             type: "list",
+//             message: "Select Department : ",
+//             name: "department",
+//             choices: allDeparments
+//         },
+//         {
+//             type: "input",
+//             message: "What Role do you want to Add ?",
+//             name: "title"
+//         },
+//         {
+//             type: "input",
+//             message: "Input Salary : ",
+//             name: "salary"
+//         }
+//         ]);
+//     });
+// }
+
+async function addRoleMenu() {
+    const allDeparments = [];
+    function queryAsync() {
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT name FROM department ORDER BY id`, function (err, res) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(res);
+            });
+        });
+    };
+    const res = await queryAsync();
+    for (let i = 0; i < res.length; i++) {
+        allDeparments.push(res[i].name);
+    };
+    return inquirer.prompt([{
+        type: "list",
+        message: "Select Department : ",
+        name: "department",
+        choices: allDeparments
+    },
+    {
+        type: "input",
+        message: "What Role do you want to Add ?",
+        name: "title"
+    },
+    {
+        type: "input",
+        message: "Input Salary : ",
+        name: "salary"
+    }     
+    ]);
 }
+
 function addRole() {
-    addRoleMenu().then(function(data){
-        connection.query(`INSERT INTO role (title,salary,department_id) VALUES ("${data.title}","${data.salary}","${data.department}")`,function(err,res){
+    addRoleMenu().then(function (data) {
+        connection.query(`INSERT INTO role (title,salary,department_id) VALUES ("${data.title}","${data.salary}","${data.department}")`, function (err, res) {
             // console.table(res);
             viewRoles();
         });
     });
 }
 
-function addEmployeeMenu(){
+function addEmployeeMenu() {
     return inquirer.prompt([{
-        type:"input",
+        type: "input",
         message: "What is Employee's Fist Name ?",
-        name : "firstName"
+        name: "firstName"
     },
     {
-        type:"input",
+        type: "input",
         message: "What is Employee's Last Name ?",
         name: "lastName"
     },
     {
-        type:"input",
+        type: "input",
         message: "What is Employee's Role ?",
-        name:"role"
+        name: "role"
     },
     {
-        type:"input",
-        message:"Who is Employee's Manager ?",
-        name:"manager"
+        type: "input",
+        message: "Who is Employee's Manager ?",
+        name: "manager"
     }]);
 }
-function addEmployee(){
-    addEmployeeMenu().then(function(data){
-        connection.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES ("${data.firstName}","${data.lastName}","${data.role}","${data.manager}")`,function(err,res){
+function addEmployee() {
+    addEmployeeMenu().then(function (data) {
+        connection.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES ("${data.firstName}","${data.lastName}","${data.role}","${data.manager}")`, function (err, res) {
             // console.table(res);
             viewEmployee();
         });
     });
 }
-function deleteDepartmentMenu(){
+function deleteDepartmentMenu() {
     return inquirer.prompt([{
         type: "input",
         message: "What Department do you want to Delete ?",
         name: "department"
     }]);
 };
-function deleteDepartment(){
-    deleteDepartmentMenu().then(function(data){
-        connection.query(`DELETE FROM department WHERE name="${data.department}"`,function(err,res){
+function deleteDepartment() {
+    deleteDepartmentMenu().then(function (data) {
+        connection.query(`DELETE FROM department WHERE name="${data.department}"`, function (err, res) {
             // console.table(res);
             viewDepartment();
         });
     });
 };
-function deleteRoleMenu(){
+function deleteRoleMenu() {
     return inquirer.prompt([{
         type: "input",
         message: "What Role do you want to Delete ?",
         name: "role"
-}]);
+    }]);
 };
-function deleteRole(){
-    deleteRoleMenu().then(function(data){
-        connection.query(`DELETE FROM role WHERE title = "${data.role}"`,function(err,res){
+function deleteRole() {
+    deleteRoleMenu().then(function (data) {
+        connection.query(`DELETE FROM role WHERE title = "${data.role}"`, function (err, res) {
             viewRoles();
         });
     });
 };
 
-function deleteEmployeeMenu(){
+function deleteEmployeeMenu() {
     return inquirer.prompt([{
         type: "input",
         message: "Which Employee do you want to Delete ?",
         name: "employee"
     }]);
 };
-function deleteEmployee(){
-    deleteEmployeeMenu().then(function(data){
-        connection.query(`DELETE FROM employee WHERE first_name = "${data.employee}"`,function(err,res){
+function deleteEmployee() {
+    deleteEmployeeMenu().then(function (data) {
+        connection.query(`DELETE FROM employee WHERE first_name = "${data.employee}"`, function (err, res) {
             viewEmployee();
         });
     });
 }
 
-function updateRoleMenu(){
+function updateRoleMenu() {
     return inquirer.prompt([{
         type: "input",
         message: "Which Role do you want to Update ?",
@@ -206,9 +241,9 @@ function updateRoleMenu(){
         name: "salary"
     }]);
 }
-function updateRole(){
-    updateRoleMenu().then(function(data){
-        connection.query(`UPDATE role SET salary = "${data.salary}" WHERE title = "${data.role}"`,function(err,res){
+function updateRole() {
+    updateRoleMenu().then(function (data) {
+        connection.query(`UPDATE role SET salary = "${data.salary}" WHERE title = "${data.role}"`, function (err, res) {
             viewRoles();
         });
     });
@@ -234,7 +269,7 @@ function updateRole(){
 //     });
 // }
 
-function quite(){
+function quite() {
     console.clear();
     console.log("Good Bye");
     connection.end();
@@ -267,7 +302,7 @@ async function init() {
                 return updateRole();
             case "Update Employee":
                 return updateEmployee();
-            default :
+            default:
                 return quite();
         }
     }
