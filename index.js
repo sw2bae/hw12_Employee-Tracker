@@ -1,7 +1,9 @@
 require('dotenv').config();
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-
+var allDeparments = [];
+var allRoles =[];
+var allEmployee = [];
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -110,19 +112,39 @@ function addDepartment() {
 //     });
 // }
 
-async function addRoleMenu() {
-    const allDeparments = [];
-    function queryAsync() {
-        return new Promise((resolve, reject) => {
-            connection.query(`SELECT name FROM department ORDER BY id`, function (err, res) {
-                if (err) {
-                    reject(err);
-                }
-                resolve(res);
-            });
+function departmentList() {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT name FROM department ORDER BY id`, function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
         });
-    };
-    const res = await queryAsync();
+    });
+};
+function roleList(){
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT title FROM role ORDER BY id`, function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
+        });
+    });
+};
+function employeeList(){
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT first_name,last_name FROM employee ORDER BY id`, function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
+        });
+    });
+};
+
+async function addRoleMenu() {
+    let res = await departmentList();
     for (let i = 0; i < res.length; i++) {
         allDeparments.push(res[i].name);
     };
@@ -141,7 +163,7 @@ async function addRoleMenu() {
         type: "input",
         message: "Input Salary : ",
         name: "salary"
-    }     
+    }
     ]);
 }
 
@@ -154,7 +176,15 @@ function addRole() {
     });
 }
 
-function addEmployeeMenu() {
+async function addEmployeeMenu() {
+    let res = await roleList();
+    for (let i = 0; i < res.length; i++) {
+        allRoles.push(res[i].title);
+    };
+    res = await employeeList();
+    for (let i = 0; i < res.length; i++) {
+        allEmployee.push(res[i].first_name +" "+res[i].last_name);
+    };
     return inquirer.prompt([{
         type: "input",
         message: "What is Employee's Fist Name ?",
@@ -166,14 +196,16 @@ function addEmployeeMenu() {
         name: "lastName"
     },
     {
-        type: "input",
-        message: "What is Employee's Role ?",
-        name: "role"
+        type: "list",
+        message: "Select Employee's Role ?",
+        name: "role",
+        choices: allRoles
     },
     {
-        type: "input",
-        message: "Who is Employee's Manager ?",
-        name: "manager"
+        type: "list",
+        message: "Select Employee's Manager ?",
+        name: "manager",
+        choices:allEmployee
     }]);
 }
 function addEmployee() {
