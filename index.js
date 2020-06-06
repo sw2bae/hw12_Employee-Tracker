@@ -304,6 +304,39 @@ function updateRole() {
     });
 }
 
+async function updateEmployeeMenu(){
+    let res = await employeeList();
+    for (let i = 0; i < res.length; i++) {
+        allEmployee.push(res[i].first_name +" "+res[i].last_name);
+    };
+    res = await roleList();
+    for (let i = 0; i < res.length; i++) {
+        allRoles.push(res[i].title);
+    };
+    return inquirer.prompt([{
+        type: "list",
+        message: "Which Employee do you want to Update ?",
+        name: "employee",
+        choices: allEmployee
+    },
+    {
+        type: "input",
+        message: "Select Role : ",
+        name: "role",
+        // choices: allRoles
+    }]);
+};
+function updateEmployee(){
+    updateEmployeeMenu().then(function(data){
+        let fullName = data.employee.split(" ");
+        let firstName = fullName[0];
+        let lastName = fullName[1];
+        connection.query(`UPDATE employee SET role_id ="${data.role}" WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,function(err,res){
+            viewEmployee();
+        });
+    });
+}
+
 function quite() {
     console.clear();
     console.log("Good Bye");
