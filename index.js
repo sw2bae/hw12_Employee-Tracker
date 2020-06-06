@@ -169,7 +169,9 @@ async function addRoleMenu() {
 
 function addRole() {
     addRoleMenu().then(function (data) {
-        connection.query(`INSERT INTO role (title,salary,department_id) SELECT "${data.title}","${data.salary}",department.id FROM department WHERE department.name = "${data.department}"`, function (err, res) {
+        connection.query(`INSERT INTO role (title,salary,department_id) 
+        SELECT "${data.title}","${data.salary}",department.id 
+        FROM department WHERE department.name = "${data.department}"`, function (err, res) {
             // console.table(res);
             viewRoles();
         });
@@ -200,22 +202,32 @@ async function addEmployeeMenu() {
         message: "Select Employee's Role ?",
         name: "role",
         choices: allRoles
-    },
-    {
-        type: "list",
-        message: "Select Employee's Manager ?",
-        name: "manager",
-        choices:allEmployee
-    }]);
+    }
+    // {
+    //     type: "input",
+    //     message: "Select Employee's Manager ?",
+    //     name: "manager",
+    //     // choices:allEmployee
+    // }
+]);
 }
 function addEmployee() {
     addEmployeeMenu().then(function (data) {
-        connection.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES ("${data.firstName}","${data.lastName}","${data.role}","${data.manager}")`, function (err, res) {
+        // let managerfullName = data.manager.split(" ");
+        // let managerfirstName = managerfullName[0];
+        // let managerlastName = managerfullName[1];
+        connection.query(`INSERT INTO employee (first_name,last_name,role_id) 
+        SELECT "${data.firstName}","${data.lastName}",role.id 
+        FROM role WHERE role.title = "${data.role}"`,
+       function (err, res) {
             // console.table(res);
             viewEmployee();
         });
     });
 }
+// employee.id FROM employee 
+// WHERE employee.first_name = "${managerfirstName}" AND WHERE employee.last_name = "${managerlastName}"`, 
+
 async function deleteDepartmentMenu() {
     let res = await departmentList();
     for (let i = 0; i < res.length; i++) {
