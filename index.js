@@ -47,6 +47,37 @@ function mainmenu() {
     ]);
 }
 
+function departmentList() {
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT name FROM department ORDER BY id`, function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
+        });
+    });
+};
+function roleList(){
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT title FROM role ORDER BY id`, function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
+        });
+    });
+};
+function employeeList(){
+    return new Promise((resolve, reject) => {
+        connection.query(`SELECT first_name,last_name FROM employee ORDER BY id`, function (err, res) {
+            if (err) {
+                reject(err);
+            }
+            resolve(res);
+        });
+    });
+};
+
 function viewDepartment() {
     connection.query("SELECT name FROM department ORDER BY id", function (err, res) {
         if (err) throw err;
@@ -69,6 +100,7 @@ function viewEmployee() {
         connection.end();
     });
 };
+
 
 function addDepartmentMenu() {
     return inquirer.prompt([{
@@ -110,37 +142,6 @@ function addDepartment() {
 //         ]);
 //     });
 // }
-
-function departmentList() {
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT name FROM department ORDER BY id`, function (err, res) {
-            if (err) {
-                reject(err);
-            }
-            resolve(res);
-        });
-    });
-};
-function roleList(){
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT title FROM role ORDER BY id`, function (err, res) {
-            if (err) {
-                reject(err);
-            }
-            resolve(res);
-        });
-    });
-};
-function employeeList(){
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT first_name,last_name FROM employee ORDER BY id`, function (err, res) {
-            if (err) {
-                reject(err);
-            }
-            resolve(res);
-        });
-    });
-};
 
 async function addRoleMenu() {
     let res = await departmentList();
@@ -272,10 +273,6 @@ function deleteEmployee() {
         let fullName = data.employee.split(" ");
         let firstName = fullName[0];
         let lastName = fullName[1];
-        // console.log(fullName);
-        // console.log(firstName);
-        // console.log(lastName);
-
         connection.query(`DELETE FROM employee WHERE first_name ="${firstName}" AND last_name = "${lastName}"`, function (err, res) {
             viewEmployee();
         });
@@ -301,26 +298,6 @@ function updateRole() {
         });
     });
 }
-
-
-// function deleteDepartmentMenu() {
-//     let allDeparments = viewDepartment();
-//     // make a connection query to return all the departments  and save as a variable then render that vaira in choices
-
-//     return inquirer.prompt([{
-//         type: "list",
-//         message: "Which Department do you want to Delete ?",
-//         name: "departmentDelete",
-//         choices: []
-//     }
-//     ]);
-// }
-// function deleteDepartment() {
-//     deleteDepartmentMenu();
-//     connection.query("DELETE FROM department WHERE name = ?",[], function (err, res) {
-//         console.log(res.name);
-//     });
-// }
 
 function quite() {
     console.clear();
