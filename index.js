@@ -48,14 +48,14 @@ function mainmenu() {
 }
 
 function viewDepartment() {
-    connection.query("SELECT * FROM department ORDER BY id", function (err, res) {
+    connection.query("SELECT name FROM department ORDER BY id", function (err, res) {
         if (err) throw err;
         console.table(res);
     });
     connection.end();
 }
 function viewRoles() {
-    connection.query("SELECT role.id,title,salary,name AS department FROM role LEFT JOIN department ON role.department_id = department.id", function (err, res) {
+    connection.query("SELECT title,salary,name AS department FROM role LEFT JOIN department ON role.department_id = department.id", function (err, res) {
         if (err) throw err;
         console.table(res);
         connection.end();
@@ -63,7 +63,7 @@ function viewRoles() {
 }
 
 function viewEmployee() {
-    connection.query("SELECT employee.id,first_name,last_name,title,salary,department.name AS department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id", function (err, res) {
+    connection.query("SELECT first_name,last_name,title,salary,department.name AS department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id", function (err, res) {
         if (err) throw err;
         console.table(res);
         connection.end();
@@ -235,11 +235,16 @@ function deleteDepartment() {
         });
     });
 };
-function deleteRoleMenu() {
+async function deleteRoleMenu() {
+    let res = await roleList();
+    for (let i = 0; i < res.length; i++) {
+        allRoles.push(res[i].title);
+    };
     return inquirer.prompt([{
-        type: "input",
+        type: "list",
         message: "What Role do you want to Delete ?",
-        name: "role"
+        name: "role",
+        choices:allRoles
     }]);
 };
 function deleteRole() {
@@ -250,16 +255,28 @@ function deleteRole() {
     });
 };
 
-function deleteEmployeeMenu() {
+async function deleteEmployeeMenu() {
+    let res = await employeeList();
+    for (let i = 0; i < res.length; i++) {
+        allEmployee.push(res[i].first_name +" "+res[i].last_name);
+    };
     return inquirer.prompt([{
-        type: "input",
+        type: "list",
         message: "Which Employee do you want to Delete ?",
-        name: "employee"
+        name: "employee",
+        choices: allEmployee
     }]);
 };
 function deleteEmployee() {
     deleteEmployeeMenu().then(function (data) {
-        connection.query(`DELETE FROM employee WHERE first_name = "${data.employee}"`, function (err, res) {
+        let fullName = data.employee.split(" ");
+        let firstName = fullName[0];
+        let lastName = fullName[1];
+        // console.log(fullName);
+        // console.log(firstName);
+        // console.log(lastName);
+
+        connection.query(`DELETE FROM employee WHERE first_name ="${firstName}" AND last_name = "${lastName}"`, function (err, res) {
             viewEmployee();
         });
     });
