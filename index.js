@@ -169,7 +169,7 @@ async function addRoleMenu() {
 
 function addRole() {
     addRoleMenu().then(function (data) {
-        connection.query(`INSERT INTO role (title,salary,department_id) VALUES ("${data.title}","${data.salary}","${data.department}")`, function (err, res) {
+        connection.query(`INSERT INTO role (title,salary,department_id) SELECT "${data.title}","${data.salary}",department.id FROM department WHERE department.name = "${data.department}"`, function (err, res) {
             // console.table(res);
             viewRoles();
         });
