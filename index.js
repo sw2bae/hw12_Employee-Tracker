@@ -70,7 +70,6 @@ function viewEmployee() {
     });
 };
 
-
 function addDepartmentMenu() {
     return inquirer.prompt([{
         type: "input",
@@ -216,11 +215,16 @@ function addEmployee() {
         });
     });
 }
-function deleteDepartmentMenu() {
+async function deleteDepartmentMenu() {
+    let res = await departmentList();
+    for (let i = 0; i < res.length; i++) {
+        allDeparments.push(res[i].name);
+    };
     return inquirer.prompt([{
-        type: "input",
+        type: "list",
         message: "What Department do you want to Delete ?",
-        name: "department"
+        name: "department",
+        choices:allDeparments
     }]);
 };
 function deleteDepartment() {
