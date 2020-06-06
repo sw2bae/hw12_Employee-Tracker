@@ -279,11 +279,16 @@ function deleteEmployee() {
     });
 }
 
-function updateRoleMenu() {
+async function updateRoleMenu() {
+    let res = await roleList();
+    for (let i = 0; i < res.length; i++) {
+        allRoles.push(res[i].title);
+    };
     return inquirer.prompt([{
-        type: "input",
+        type: "list",
         message: "Which Role do you want to Update ?",
-        name: "role"
+        name: "role",
+        choices: allRoles
     },
     {
         type: "input",
