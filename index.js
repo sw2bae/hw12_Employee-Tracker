@@ -1,11 +1,11 @@
+//Installation
 require('dotenv').config();
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 var allDeparments = [];
 var allRoles =[];
 var allEmployee = [];
-var trigger =[];
-
+//Connection
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
     password: process.env.password,
     database: "company"
 });
-
+//Run the program after connection
 connection.connect((err)=>{
     if (err) {
         console.error("error connecting: " + err.stack);
@@ -22,7 +22,7 @@ connection.connect((err)=>{
     console.log("connected as id " + connection.threadId);
         init();
 });
-
+//Mainmenu
 function mainmenu() {
     return inquirer.prompt([
         {
@@ -46,7 +46,7 @@ function mainmenu() {
         }
     ]);
 }
-
+//pulling information for DB accordingly
 function departmentList() {
     return new Promise((resolve, reject) => {
         connection.query(`SELECT name FROM department ORDER BY id`,(err, res)=>{
@@ -77,7 +77,7 @@ function employeeList(){
         });
     });
 };
-
+//Display updated information 
 function viewDepartment() {
     connection.query("SELECT name FROM department ORDER BY id",(err, res)=>{
         if (err) throw err;
@@ -99,7 +99,7 @@ function viewEmployee() {
         connection.end();
     });
 };
-
+//Add information
 function addDepartmentMenu() {
     return inquirer.prompt([{
         type: "input",
@@ -140,7 +140,6 @@ function addDepartment() {
 //         ]);
 //     });
 // }
-
 async function addRoleMenu() {
     let res = await departmentList();
     for (let i = 0; i < res.length; i++) {
@@ -164,7 +163,6 @@ async function addRoleMenu() {
     }
     ]);
 }
-
 function addRole() {
     addRoleMenu().then((data)=>{
         connection.query(`INSERT INTO role (title,salary,department_id) 
@@ -208,7 +206,7 @@ async function addEmployeeMenu() {
     //     // choices:allEmployee
     // }
 ]);
-}
+};
 function addEmployee() {
     addEmployeeMenu().then((data)=>{
         // let managerfullName = data.manager.split(" ");
@@ -223,7 +221,7 @@ function addEmployee() {
         });
     });
 }
-
+//Delete information
 async function deleteDepartmentMenu() {
     let res = await departmentList();
     for (let i = 0; i < res.length; i++) {
@@ -263,7 +261,6 @@ function deleteRole() {
         });
     });
 };
-
 async function deleteEmployeeMenu() {
     let res = await employeeList();
     for (let i = 0; i < res.length; i++) {
@@ -286,7 +283,7 @@ function deleteEmployee() {
         });
     });
 }
-
+//Update information
 async function updateRoleMenu() {
     let res = await roleList();
     for (let i = 0; i < res.length; i++) {
@@ -346,14 +343,13 @@ function updateEmployee(){
         });
     });
 }
-
+//quite Function
 function quite() {
     console.clear();
     console.log("Good Bye");
     connection.end();
-    trigger.push("DONE");
 };
-
+//init Function for application flow
 async function init() {
     try {
         const menu = await mainmenu();
