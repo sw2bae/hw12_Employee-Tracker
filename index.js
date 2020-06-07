@@ -4,6 +4,7 @@ const inquirer = require("inquirer");
 var allDeparments = [];
 var allRoles =[];
 var allEmployee = [];
+var trigger =[];
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -13,14 +14,13 @@ var connection = mysql.createConnection({
     database: "company"
 });
 
-connection.connect(function (err) {
+connection.connect((err)=>{
     if (err) {
         console.error("error connecting: " + err.stack);
         return;
     }
-
     console.log("connected as id " + connection.threadId);
-    init();
+        init();
 });
 
 function mainmenu() {
@@ -49,7 +49,7 @@ function mainmenu() {
 
 function departmentList() {
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT name FROM department ORDER BY id`, function (err, res) {
+        connection.query(`SELECT name FROM department ORDER BY id`,(err, res)=>{
             if (err) {
                 reject(err);
             }
@@ -59,7 +59,7 @@ function departmentList() {
 };
 function roleList(){
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT title FROM role ORDER BY id`, function (err, res) {
+        connection.query(`SELECT title FROM role ORDER BY id`,(err, res)=>{
             if (err) {
                 reject(err);
             }
@@ -69,7 +69,7 @@ function roleList(){
 };
 function employeeList(){
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT first_name,last_name FROM employee ORDER BY id`, function (err, res) {
+        connection.query(`SELECT first_name,last_name FROM employee ORDER BY id`,(err, res)=>{
             if (err) {
                 reject(err);
             }
@@ -79,28 +79,26 @@ function employeeList(){
 };
 
 function viewDepartment() {
-    connection.query("SELECT name FROM department ORDER BY id", function (err, res) {
+    connection.query("SELECT name FROM department ORDER BY id",(err, res)=>{
         if (err) throw err;
         console.table(res);
     });
     connection.end();
 }
 function viewRoles() {
-    connection.query("SELECT title,salary,name AS department FROM role LEFT JOIN department ON role.department_id = department.id", function (err, res) {
+    connection.query("SELECT title,salary,name AS department FROM role LEFT JOIN department ON role.department_id = department.id",(err, res)=>{
         if (err) throw err;
         console.table(res);
         connection.end();
     });
 }
-
 function viewEmployee() {
-    connection.query("SELECT first_name,last_name,title,salary,department.name AS department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id", function (err, res) {
+    connection.query("SELECT first_name,last_name,title,salary,department.name AS department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id",(err, res)=>{
         if (err) throw err;
         console.table(res);
         connection.end();
     });
 };
-
 
 function addDepartmentMenu() {
     return inquirer.prompt([{
@@ -110,8 +108,8 @@ function addDepartmentMenu() {
     }]);
 }
 function addDepartment() {
-    addDepartmentMenu().then(function (data) {
-        connection.query(`INSERT INTO department (name) VALUES ("${data.department}")`, function (err, res) {
+    addDepartmentMenu().then((data)=>{
+        connection.query(`INSERT INTO department (name) VALUES ("${data.department}")`,(err, res)=>{
             viewDepartment();
         });
     });
@@ -168,10 +166,10 @@ async function addRoleMenu() {
 }
 
 function addRole() {
-    addRoleMenu().then(function (data) {
+    addRoleMenu().then((data)=>{
         connection.query(`INSERT INTO role (title,salary,department_id) 
         SELECT "${data.title}","${data.salary}",department.id 
-        FROM department WHERE department.name = "${data.department}"`, function (err, res) {
+        FROM department WHERE department.name = "${data.department}"`,(err, res)=>{
             // console.table(res);
             viewRoles();
         });
@@ -212,14 +210,14 @@ async function addEmployeeMenu() {
 ]);
 }
 function addEmployee() {
-    addEmployeeMenu().then(function (data) {
+    addEmployeeMenu().then((data)=>{
         // let managerfullName = data.manager.split(" ");
         // let managerfirstName = managerfullName[0];
         // let managerlastName = managerfullName[1];
         connection.query(`INSERT INTO employee (first_name,last_name,role_id) 
         SELECT "${data.firstName}","${data.lastName}",role.id 
         FROM role WHERE role.title = "${data.role}"`,
-       function (err, res) {
+       (err, res)=>{
             // console.table(res);
             viewEmployee();
         });
@@ -239,8 +237,8 @@ async function deleteDepartmentMenu() {
     }]);
 };
 function deleteDepartment() {
-    deleteDepartmentMenu().then(function (data) {
-        connection.query(`DELETE FROM department WHERE name="${data.department}"`, function (err, res) {
+    deleteDepartmentMenu().then((data)=>{
+        connection.query(`DELETE FROM department WHERE name="${data.department}"`,(err, res)=>{
             // console.table(res);
             viewDepartment();
         });
@@ -259,8 +257,8 @@ async function deleteRoleMenu() {
     }]);
 };
 function deleteRole() {
-    deleteRoleMenu().then(function (data) {
-        connection.query(`DELETE FROM role WHERE title = "${data.role}"`, function (err, res) {
+    deleteRoleMenu().then((data)=>{
+        connection.query(`DELETE FROM role WHERE title = "${data.role}"`,(err, res)=>{
             viewRoles();
         });
     });
@@ -279,11 +277,11 @@ async function deleteEmployeeMenu() {
     }]);
 };
 function deleteEmployee() {
-    deleteEmployeeMenu().then(function (data) {
+    deleteEmployeeMenu().then((data)=>{
         let fullName = data.employee.split(" ");
         let firstName = fullName[0];
         let lastName = fullName[1];
-        connection.query(`DELETE FROM employee WHERE first_name ="${firstName}" AND last_name = "${lastName}"`, function (err, res) {
+        connection.query(`DELETE FROM employee WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,(err, res)=>{
             viewEmployee();
         });
     });
@@ -307,8 +305,8 @@ async function updateRoleMenu() {
     }]);
 }
 function updateRole() {
-    updateRoleMenu().then(function (data) {
-        connection.query(`UPDATE role SET salary = "${data.salary}" WHERE title = "${data.role}"`, function (err, res) {
+    updateRoleMenu().then((data)=>{
+        connection.query(`UPDATE role SET salary = "${data.salary}" WHERE title = "${data.role}"`,(err, res)=>{
             viewRoles();
         });
     });
@@ -337,13 +335,13 @@ async function updateEmployeeMenu(){
     }]);
 };
 function updateEmployee(){
-    updateEmployeeMenu().then(function(data){
+    updateEmployeeMenu().then((data)=>{
         let fullName = data.employee.split(" ");
         let firstName = fullName[0];
         let lastName = fullName[1];
         connection.query(`UPDATE employee SET role_id =(
             SELECT role.id FROM role WHERE role.title = "${data.role}") 
-            WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,function(err,res){
+            WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,(err,res)=>{
             viewEmployee();
         });
     });
@@ -353,7 +351,7 @@ function quite() {
     console.clear();
     console.log("Good Bye");
     connection.end();
-
+    trigger.push("DONE");
 };
 
 async function init() {
