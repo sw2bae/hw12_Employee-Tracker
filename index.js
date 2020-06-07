@@ -225,8 +225,6 @@ function addEmployee() {
         });
     });
 }
-// employee.id FROM employee 
-// WHERE employee.first_name = "${managerfirstName}" AND WHERE employee.last_name = "${managerlastName}"`, 
 
 async function deleteDepartmentMenu() {
     let res = await departmentList();
@@ -332,10 +330,10 @@ async function updateEmployeeMenu(){
         choices: allEmployee
     },
     {
-        type: "input",
+        type: "list",
         message: "Select Role : ",
         name: "role",
-        // choices: allRoles
+        choices: allRoles
     }]);
 };
 function updateEmployee(){
@@ -343,7 +341,9 @@ function updateEmployee(){
         let fullName = data.employee.split(" ");
         let firstName = fullName[0];
         let lastName = fullName[1];
-        connection.query(`UPDATE employee SET role_id ="${data.role}" WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,function(err,res){
+        connection.query(`UPDATE employee SET role_id =(
+            SELECT role.id FROM role WHERE role.title = "${data.role}") 
+            WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,function(err,res){
             viewEmployee();
         });
     });
