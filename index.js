@@ -82,21 +82,24 @@ function viewDepartment() {
     connection.query("SELECT name FROM department ORDER BY id",(err, res)=>{
         if (err) throw err;
         console.table(res);
+        allDeparments = [];
+        init();
     });
-    connection.end();
 }
 function viewRoles() {
     connection.query("SELECT title,salary,name AS department FROM role LEFT JOIN department ON role.department_id = department.id",(err, res)=>{
         if (err) throw err;
         console.table(res);
-        connection.end();
+        allRoles=[];
+        init();
     });
 }
 function viewEmployee() {
     connection.query("SELECT first_name,last_name,title,salary,department.name AS department FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id",(err, res)=>{
         if (err) throw err;
         console.table(res);
-        connection.end();
+        allEmployee=[];
+        init();
     });
 };
 //Add information
@@ -111,6 +114,7 @@ function addDepartment() {
     addDepartmentMenu().then((data)=>{
         connection.query(`INSERT INTO department (name) VALUES ("${data.department}")`,(err, res)=>{
             viewDepartment();
+            // init();
         });
     });
 }
@@ -170,6 +174,7 @@ function addRole() {
         FROM department WHERE department.name = "${data.department}"`,(err, res)=>{
             // console.table(res);
             viewRoles();
+            // init();
         });
     });
 }
@@ -179,10 +184,10 @@ async function addEmployeeMenu() {
     for (let i = 0; i < res.length; i++) {
         allRoles.push(res[i].title);
     };
-    res = await employeeList();
-    for (let i = 0; i < res.length; i++) {
-        allEmployee.push(res[i].first_name +" "+res[i].last_name);
-    };
+    // res = await employeeList();
+    // for (let i = 0; i < res.length; i++) {
+    //     allEmployee.push(res[i].first_name +" "+res[i].last_name);
+    // };
     return inquirer.prompt([{
         type: "input",
         message: "What is Employee's Fist Name ?",
@@ -218,6 +223,7 @@ function addEmployee() {
        (err, res)=>{
             // console.table(res);
             viewEmployee();
+            // init();
         });
     });
 }
@@ -239,6 +245,7 @@ function deleteDepartment() {
         connection.query(`DELETE FROM department WHERE name="${data.department}"`,(err, res)=>{
             // console.table(res);
             viewDepartment();
+            // init();
         });
     });
 };
@@ -257,7 +264,9 @@ async function deleteRoleMenu() {
 function deleteRole() {
     deleteRoleMenu().then((data)=>{
         connection.query(`DELETE FROM role WHERE title = "${data.role}"`,(err, res)=>{
+
             viewRoles();
+            // init();
         });
     });
 };
@@ -280,6 +289,7 @@ function deleteEmployee() {
         let lastName = fullName[1];
         connection.query(`DELETE FROM employee WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,(err, res)=>{
             viewEmployee();
+            // init();
         });
     });
 }
@@ -305,6 +315,7 @@ function updateRole() {
     updateRoleMenu().then((data)=>{
         connection.query(`UPDATE role SET salary = "${data.salary}" WHERE title = "${data.role}"`,(err, res)=>{
             viewRoles();
+            // init();
         });
     });
 }
@@ -340,6 +351,7 @@ function updateEmployee(){
             SELECT role.id FROM role WHERE role.title = "${data.role}") 
             WHERE first_name ="${firstName}" AND last_name = "${lastName}"`,(err,res)=>{
             viewEmployee();
+            // init();
         });
     });
 }
